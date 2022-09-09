@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option java_package = "ex.grpc";
+
+package communicate;
+
+// Defines the service
+service DistributedSystemsService {
+    	/* Distributed Mutual Exclusion Services*/
+    	rpc recv_request (ReqLock) returns (Ack) {}	
+    	rpc recv_reply (Ack) returns (Ack) {}
+    	rpc roll_call (Ack) returns (Ack) {}
+	
+	/* Distributed Shared Memory Services*/
+	rpc recv_page_req (Ack) returns (Ack) {}
+	rpc recv_var_node (Var_Ds_Info) returns (Ack) {}
+	rpc recv_state_trans_dirn_req (Node_state_info) returns (GetInfo) {}
+	rpc recv_state_trans_node_req (Node_state_info) returns (GetInfo) {}
+	rpc recv_ack_wait_dirn (Node_state_info) returns (Ack) {}
+}
+
+// The request message containing requested numbers
+message ReqLock {
+    	uint32 seq_num = 1;
+    	uint32 node_num = 2;
+}
+
+// The response message containing response
+message Ack {
+    	uint32 ack = 1;
+}
+
+message Var_Ds_Info {
+	uint64 psu_ds_start = 1;
+	uint32 tag = 2;
+	uint32 curr_page = 3;
+	uint32 tot_pages = 4;
+	uint32 node_id = 5;
+}
+
+message Node_state_info {
+	uint32 tag = 1;
+	uint32 effect = 2;
+	uint32 node_id = 3;
+}
+
+message GetInfo {
+	int32 page_req = 1;
+	repeated int32 pg_rq = 2; 
+	uint32 ack = 3;
+}
